@@ -1,0 +1,11 @@
+Dani female 22
+John male 23 
+Mike male 21
+Alice female 20
+Alan male 19
+Ben male 25
+Bob male 18
+Max female 23
+Amy female 20
+Sam male 25
+Eve female 18
