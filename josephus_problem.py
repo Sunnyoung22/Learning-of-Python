@@ -9,11 +9,10 @@ def get_person_from_file(file_name):
     from myclass import Person
 
     # Open personal information file 
-    personal_info_file = open(file_name)
-    personal_info = []
-    for line in personal_info_file: # Read it by line
-        personal_info.append(line.strip('\n')) # remove \n
-    personal_info_file.close()
+    with open(file_name) as personal_info_file:
+        personal_info = []
+        for line in personal_info_file: # Read it by line
+            personal_info.append(line.strip('\n')) # remove \n
 
     group = [] # Initialize a group of people(use dictionary type)
     # Use blank to split the information and use them to create new object of Person Class
