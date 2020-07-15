@@ -36,13 +36,14 @@ class JosephusCircle(object):
 
     def __init__(self, group, step=1, start_pos=1):
 
+        import copy
+
         if step <= 0 or start_pos <= 0:
             raise Exception("The input parameter needs to be greater than 0.")
-
-        self._people = group
+        self._people = copy.deepcopy(group)
         self.step = step
         self.start_pos = start_pos
-    
+        
     # Set some raleted parameter
     def set_step(self, step):
         if step <= 0:
