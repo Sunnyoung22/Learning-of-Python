@@ -1,6 +1,11 @@
 # This Python source file includes some classes I need
 # 2020.07.14    Sunnyoung
 
+import copy
+import os
+import csv
+import zipfile
+
 class Person(object):
     # Attention, is __; not _!
     def __init__(self, name, sex, age): # This is a magic function
@@ -35,8 +40,6 @@ class Person(object):
 class JosephusCircle(object):
 
     def __init__(self, group, step=1, start_pos=1):
-
-        import copy
 
         if step <= 0 or start_pos <= 0:
             raise Exception("The input parameter needs to be greater than 0.")
@@ -82,3 +85,42 @@ class JosephusCircle(object):
             return self.pop()
         else:
             raise StopIteration()
+
+
+class MyReader(object):
+    def __init__(self, file_name):
+        if os.path.isfile(os.path.realpath(file_name)):
+            self.file_name = file_name
+        else:
+            raise Exception("The file does not exist")
+
+    def get_file_type(self):
+        return os.path.splitext(self.file_name)[1]
+    
+    def get_information(self):
+        file_type = self.get_file_type()
+
+        ret_info = []
+        if file_type == ".txt" :
+            with open(self.file_name, 'r') as target_file:
+                for line in target_file: # Read it by line
+                    ret_info.append(line.strip('\n')) # remove \n
+            return ret_info
+        
+        elif file_type == ".csv":
+            with open(self.file_name, 'r') as target_file:
+                for line in csv.reader(target_file):
+                    ret_info.append(' '.join(line))
+            return ret_info
+        
+        elif file_type == ".zip":
+            with zipfile.ZipFile(self.file_name, "r") as zfile:
+                zfile.extractall(".\\The extracted file")
+                for extracted_file in os.listdir(".\\The extracted file"):
+                    if os.path.splitext(extracted_file)[1] == ".txt" or ".csv":
+                        self.file_name = ".\\The extracted file.\\{}".format(extracted_file)
+                        ret_info.extend(self.get_information())
+                        os.remove(self.file_name)
+            return ret_info
+        else:
+            raise Exception("Unsupported file type")
