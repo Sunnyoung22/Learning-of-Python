@@ -1,6 +1,7 @@
 # This Python source file includes some classes I need
 # 2020.07.14    Sunnyoung
 
+# Import some modules needed
 import copy
 import os
 import csv
@@ -44,6 +45,7 @@ class JosephusCircle(object):
         if step <= 0 or start_pos <= 0:
             raise Exception("The input parameter needs to be greater than 0.")
         self._people = copy.deepcopy(group)
+        self._people_bak = copy.deepcopy(group)
         self.step = step
         self.start_pos = start_pos
         
@@ -84,16 +86,17 @@ class JosephusCircle(object):
         if self.total > 0:
             return self.pop()
         else:
+            self._people = copy.deepcopy(self._people_bak)  #Restore list for next traversal
             raise StopIteration()
 
-
+# Class MyReader class can read personnel information in txt, csv and zip files
 class MyReader(object):
-    def __init__(self, file_name):
+    def __init__(self, file_name):# File_name must include file path
         if os.path.isfile(os.path.realpath(file_name)):
             self.file_name = file_name
         else:
             raise Exception("The file does not exist")
-
+    # Returns the file extension 
     def get_file_type(self):
         return os.path.splitext(self.file_name)[1]
     
@@ -110,17 +113,17 @@ class MyReader(object):
         elif file_type == ".csv":
             with open(self.file_name, 'r') as target_file:
                 for line in csv.reader(target_file):
-                    ret_info.append(' '.join(line))
+                    ret_info.append(' '.join(line)) # Use blank to join list to str and then store it to ret_info
             return ret_info
         
         elif file_type == ".zip":
             with zipfile.ZipFile(self.file_name, "r") as zfile:
-                zfile.extractall(".\\The extracted file")
-                for extracted_file in os.listdir(".\\The extracted file"):
-                    if os.path.splitext(extracted_file)[1] == ".txt" or ".csv":
-                        self.file_name = ".\\The extracted file.\\{}".format(extracted_file)
-                        ret_info.extend(self.get_information())
-                        os.remove(self.file_name)
+                zfile.extractall(".\\The extracted file") # Extract all files to the specified directory
+            for extracted_file in os.listdir(".\\The extracted file"):
+                if os.path.splitext(extracted_file)[1] == ".txt" or ".csv":
+                    self.file_name = ".\\The extracted file.\\{}".format(extracted_file)
+                    ret_info.extend(self.get_information()) # Recursively call functions to handle txt and csv
+                    os.remove(self.file_name)
             return ret_info
         else:
             raise Exception("Unsupported file type")
