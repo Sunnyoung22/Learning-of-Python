@@ -5,6 +5,7 @@
 import copy
 import os
 import csv
+
 import zipfile
 
 class Person(object):
@@ -127,3 +128,88 @@ class MyReader(object):
             return ret_info
         else:
             raise Exception("Unsupported file type")
+
+
+class Reader(object):
+    def __init__(self, file_name):# File_name must include file path
+        if os.path.isfile(os.path.realpath(file_name)):
+            self.file_name = file_name
+        else:
+            raise Exception("The file does not exist")
+    
+    # Returns the file extension 
+    def get_file_type(self):
+        return os.path.splitext(self.file_name)[1]
+
+    def get_information(self):
+        pass
+    
+
+class TxtReader(Reader):
+    # Rewrite
+    def __init__(self, file_name):# File_name must include file path
+        if os.path.isfile(os.path.realpath(file_name)):
+            super().__init__(file_name) # Initlize father class to use get_file_type()
+            if self.get_file_type() == ".txt":
+                self.file_name = file_name
+            else:
+                raise Exception("File is not in txt format")
+        else:
+            raise Exception("The file does not exist")
+    # Rewrite
+    def get_information(self):
+        ret_info = []
+        with open(self.file_name, 'r') as target_file:
+            for line in target_file: # Read it by line
+                ret_info.append(line.strip('\n')) # remove \n
+        return ret_info
+    
+
+class CsvReader(Reader):
+    
+    def __init__(self, file_name):# File_name must include file path
+        if os.path.isfile(os.path.realpath(file_name)):
+            super().__init__(file_name)
+            if self.get_file_type() == ".csv":
+                self.file_name = file_name
+            else:
+                raise Exception("File is not in csv format")
+        else:
+            raise Exception("The file does not exist")
+
+    def get_information(self):
+        ret_info = []
+        with open(self.file_name, 'r') as target_file:
+            for line in csv.reader(target_file):
+                ret_info.append(' '.join(line)) # Use blank to join list to str and then store it to ret_info
+        return ret_info
+
+
+class ZipReader(Reader):
+
+    def __init__(self, file_name):# File_name must include file path
+        if os.path.isfile(os.path.realpath(file_name)):
+            super().__init__(file_name)
+            if self.get_file_type() == ".zip":
+                self.file_name = file_name
+            else:
+                raise Exception("File is not in zip format")
+        else:
+            raise Exception("The file does not exist")
+
+    def get_information(self):
+        ret_info = []
+        with zipfile.ZipFile(self.file_name, "r") as zfile:
+            zfile.extractall(".\\The extracted file") # Extract all files to the specified directory
+        for extracted_file in os.listdir(".\\The extracted file"):
+            if os.path.splitext(extracted_file)[1] == ".txt":
+                self.file_name = ".\\The extracted file.\\{}".format(extracted_file)
+                txt_reader = TxtReader(self.file_name)
+                ret_info.extend(txt_reader.get_information())
+                os.remove(self.file_name)
+            if os.path.splitext(extracted_file)[1] == ".csv":
+                self.file_name = ".\\The extracted file.\\{}".format(extracted_file)
+                csv_reader = CsvReader(self.file_name)
+                ret_info.extend(csv_reader.get_information())
+                os.remove(self.file_name)
+        return ret_info

@@ -1,17 +1,38 @@
 #%%
 # Try to solve joseph problem using object-oriented programming
 # 2020.7.14 Sunnyoung
+
+# import Class 
+from myclass import MyReader
+from myclass import Person
+# import Class which named JosephusCircle from myclass.py 
+from myclass import JosephusCircle
+
+from myclass import Reader
+from myclass import TxtReader
+from myclass import CsvReader
+from myclass import ZipReader
+
+def get_information(obj):
+    return obj.get_information()
+
 def get_person_from_file(file_name):
     """Get information about people from "file_name"
     Return information about people in the form of a list
     """
-    # import Class 
-    from myclass import MyReader
-    from myclass import Person
+    #myreader = MyReader(file_name)
+    myreader = Reader(file_name)
+    if myreader.get_file_type() == ".txt":
+        myreader = TxtReader(file_name)
+    elif myreader.get_file_type() == ".csv":
+        myreader = CsvReader(file_name)
+    elif myreader.get_file_type() == ".zip":
+        myreader = ZipReader(file_name) 
+    else:
+        raise Exception("Unsupported file type")
 
-    myreader = MyReader(file_name)
-    personal_info = myreader.get_information()
-
+    #personal_info = myreader.get_information()
+    personal_info = get_information(myreader)
     group = [] # Initialize a group of people
     # Use blank to split the information and use them to create new object of Person Class
     for i in range(len(personal_info)):
@@ -28,9 +49,7 @@ def is_inputlegal(input_):
     else:
         return True
 
-# import Class which named JosephusCircle from myclass.py 
-from myclass import JosephusCircle
-file_name = ".\\Personal Information.zip"
+file_name = ".\\Personal Information.txt"
 
 STEP = input("请输入数到几排除成员:")
 if is_inputlegal(STEP):
