@@ -3,6 +3,8 @@
 # 2020.7.14 Sunnyoung
 
 # import Class 
+import os
+
 from myclass import MyReader
 from myclass import Person
 # import Class which named JosephusCircle from myclass.py 
@@ -14,25 +16,28 @@ from myclass import CsvReader
 from myclass import ZipReader
 
 def get_information(obj):
-    return obj.get_information()
+    return obj.get_all_info()
 
 def get_person_from_file(file_name):
     """Get information about people from "file_name"
     Return information about people in the form of a list
     """
-    #myreader = MyReader(file_name)
-    myreader = Reader(file_name)
-    if myreader.get_file_type() == ".txt":
+    
+    file_type = os.path.splitext(file_name)[1]
+    if file_type == ".txt":
         myreader = TxtReader(file_name)
-    elif myreader.get_file_type() == ".csv":
+    elif file_type == ".csv":
         myreader = CsvReader(file_name)
-    elif myreader.get_file_type() == ".zip":
+    elif file_type == ".zip":
         myreader = ZipReader(file_name) 
     else:
         raise Exception("Unsupported file type")
 
-    #personal_info = myreader.get_information()
+    #myreader = MyReader(file_name)
+    #personal_info = myreader.get_all_info()
+    
     personal_info = get_information(myreader)
+
     group = [] # Initialize a group of people
     # Use blank to split the information and use them to create new object of Person Class
     for i in range(len(personal_info)):
@@ -49,7 +54,7 @@ def is_inputlegal(input_):
     else:
         return True
 
-file_name = ".\\Personal Information.txt"
+file_name = ".\\Personal Information.csv"
 
 STEP = input("请输入数到几排除成员:")
 if is_inputlegal(STEP):
