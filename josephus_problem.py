@@ -15,8 +15,10 @@ from myclass import TxtReader
 from myclass import CsvReader
 from myclass import ZipReader
 
+"""
 def get_information(obj):
     return obj.get_all_info()
+"""
 
 def get_person_from_file(file_name):
     """Get information about people from "file_name"
@@ -34,9 +36,7 @@ def get_person_from_file(file_name):
         raise Exception("Unsupported file type")
 
     #myreader = MyReader(file_name)
-    #personal_info = myreader.get_all_info()
-    
-    personal_info = get_information(myreader)
+    personal_info = myreader.get_all_info()
 
     group = [] # Initialize a group of people
     # Use blank to split the information and use them to create new object of Person Class
